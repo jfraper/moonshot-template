@@ -1,0 +1,118 @@
+# Base
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++17
+
+# Indentation (2 spaces like ui.cpp)
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+IndentCaseLabels: true
+NamespaceIndentation: None
+ContinuationIndentWidth: 2
+
+# Line width
+ColumnLimit: 130
+
+# Braces
+BreakBeforeBraces: Attach
+
+# Parameters and arguments
+BinPackArguments: false
+BinPackParameters: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllArgumentsOnNextLine: true
+
+# Alignment - empty lines break alignment groups, comments don't
+# This means each "section" (separated by blank lines) aligns independently
+# But trailing comments align globally across sections (OverEmptyLines: 5)
+# NOTE: BlockIndent causes excessive indentation in nested designated initializers
+# (e.g. .layout = { .direction = ... }) because AlignConsecutiveAssignments pushes
+# the opening '{' far right and children indent from there.
+# When clang-format 22+ is available, replace BlockIndent with:
+#   AlignAfterOpenBracket: true
+#   BreakAfterOpenBracketBracedList: true
+#   BreakBeforeCloseBracketBracedList: true
+#   BreakAfterOpenBracketFunction: true
+#   BreakBeforeCloseBracketFunction: true
+# These granular options allow independent control over braced lists vs function calls.
+AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
+  AlignCompound: true
+  PadOperators: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
+AlignOperands: Align
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 5
+ReflowComments: false
+AlignEscapedNewlines: Left
+
+# Spacing
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInAngles: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeRangeBasedForLoopColon: true
+Cpp11BracedListStyle: true
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+
+# Pointers and references (left aligned like ui.cpp)
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# Blank lines
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+EmptyLineBeforeAccessModifier: LogicalBlock
+EmptyLineAfterAccessModifier: Never
+SeparateDefinitionBlocks: Leave
+
+# Short forms - allow short functions on single line (including free functions)
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Inline
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: true
+
+# Break behavior
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+AlwaysBreakAfterReturnType: None
+AlwaysBreakTemplateDeclarations: Yes
+
+# Penalties (control where long lines break)
+PenaltyBreakAssignment: 100000
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 1000
+PenaltyExcessCharacter: 10
+PenaltyReturnTypeOnItsOwnLine: 60
+
+# Designated initializers (C++20 style used in ui.cpp)
+InsertBraces: false

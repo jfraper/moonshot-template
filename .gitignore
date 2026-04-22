@@ -1,0 +1,45 @@
+# Build artifacts
+build/
+dist/
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.out
+*.exe
+*.app
+*.d
+*.pch
+*.gch
+*.ilk
+*.pdb
+*.dwo
+default.profraw
+
+# IDE / tools
+.cache/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+compile_commands.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Clang
+.clangd
+.clang-format-ignore
+
+# Dev notes (local only)
+dev/
+tmp/
+
+# AI
+.opencode/
+.claude/
