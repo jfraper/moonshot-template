@@ -21,6 +21,7 @@ git submodule update --init --recursive
 1. Rename the project in `CMakeLists.txt` (change `mygame` to your project name)
 2. Edit `src/main.cpp` to set your game title and window size
 3. Put game assets in `assets/`
+4. Optional: drop a 1024x1024 `icon.png` in the project root and it becomes the app and window icon
 
 ## Scripts
 
@@ -44,6 +45,11 @@ my-game/
   dist/            # Build output (auto-generated)
 ```
 
+Debug builds produce a hot-reload launcher (`<project>.out`). Release builds produce a plain
+executable, except on macOS where the game is packaged as `<project>.app` — the bundle is what
+gives it a Dock icon, its name in the menu bar and a path to notarization. `./scripts/run.sh`
+handles both.
+
 ## Updating the Engine
 
 ```bash
@@ -52,8 +58,8 @@ my-game/
 
 # Or pin to a specific version
 cd engine
-git checkout v0.17.0
+git checkout v0.37.0
 cd ..
 git add engine
-git commit -m "pin engine to v0.17.0"
+git commit -m "pin engine to v0.37.0"
 ```

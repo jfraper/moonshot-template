@@ -45,6 +45,9 @@ GAME_API void game_update(f32 dt) {
 
   set_background_color(0.09f, 0.09f, 0.14f, 1.0f);
 
+  // Draw positions are world coordinates: the origin is the CENTER of the window and Y grows
+  // upwards, so this 800x600 window spans x in [-400, 400] and y in [-300, 300].
+
   // Title
   static TextStyle style = {
     .color     = COLORS::WHITE,
@@ -52,12 +55,14 @@ GAME_API void game_update(f32 dt) {
     .font_size = 32.0f,
   };
 
-  draw_text(renderer, Transform::from_translation(400.0f, 250.0f), Text{"Your game starts here.", &style});
+  draw_text(renderer, Transform::from_translation(0.0f, 50.0f), Text{"Your game starts here.", &style});
 
   // WASD
-  Quad key = {.width = 52.0f, .height = 52.0f, .color = Color4{0.35f, 0.65f, 1.0f, 1.0f}, .border_radius = Corners(8.0f)};
-  draw_quad(renderer, Transform::from_translation(400.0f, 300.0f), key);   // W
-  draw_quad(renderer, Transform::from_translation(344.0f, 356.0f), key);   // A
-  draw_quad(renderer, Transform::from_translation(400.0f, 356.0f), key);   // S
-  draw_quad(renderer, Transform::from_translation(456.0f, 356.0f), key);   // D
+  Quad key = {
+    .width = 52.0f, .height = 52.0f, .color = Color4{0.35f, 0.65f, 1.0f, 1.0f}, .border_radius = Corners::all(8.0f)
+  };
+  draw_quad(renderer, Transform::from_translation(0.0f, 0.0f), key);      // W
+  draw_quad(renderer, Transform::from_translation(-56.0f, -56.0f), key);  // A
+  draw_quad(renderer, Transform::from_translation(0.0f, -56.0f), key);    // S
+  draw_quad(renderer, Transform::from_translation(56.0f, -56.0f), key);   // D
 }

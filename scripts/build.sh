@@ -34,26 +34,10 @@ OS_NAME=$(uname)
 
 # Detect platform
 case "$OS_NAME" in
-  Darwin)
-    PLATFORM="macos"
-    SDK_PATH=$(xcrun --sdk macosx --show-sdk-path)
-    OSX_DEPLOYMENT_TARGET=$(sw_vers -productVersion | cut -d '.' -f 1-2)
-    ;;
-  Linux)
-    PLATFORM="linux"
-    SDK_PATH=""
-    OSX_DEPLOYMENT_TARGET=""
-    ;;
-  MINGW*|MSYS*|CYGWIN*)
-    PLATFORM="windows"
-    SDK_PATH=""
-    OSX_DEPLOYMENT_TARGET=""
-    ;;
-  *)
-    PLATFORM="linux"
-    SDK_PATH=""
-    OSX_DEPLOYMENT_TARGET=""
-    ;;
+  Darwin)                PLATFORM="macos" ;;
+  Linux)                 PLATFORM="linux" ;;
+  MINGW*|MSYS*|CYGWIN*)  PLATFORM="windows" ;;
+  *)                     PLATFORM="linux" ;;
 esac
 
 # Parse arguments
@@ -82,6 +66,14 @@ elif [ "$UPDATE_ENGINE" = true ]; then
   "$SCRIPT_DIR/setup.sh"
 fi
 
+# macOS deployment target and architectures come from the engine, never from this machine:
+# the engine keys its prebuilt dependency cache by them and ships Release as a universal
+# binary with a fixed OS floor. Deriving them here instead would miss that cache and pin the
+# shipped game to whatever macOS the build machine happens to run.
+# Sets SDK_PATH, OSX_DEPLOYMENT_TARGET, OSX_ARCHITECTURES (empty off macOS).
+. "${ENGINE_DIR}/scripts/macos_config.sh"
+moonshot_macos_config "$BUILD_TYPE"
+
 # Clean
 if [ "$CLEAN" = true ]; then
   rm -rf "$BUILD_DIR"
@@ -93,7 +85,7 @@ mkdir -p "$BUILD_DIR"
 BUILD_START_TIME=$(date +%s)
 
 # Pre-build external dependencies (engine script)
-cd "$ENGINE_DIR" && ./scripts/build-external.sh "$BUILD_TYPE" "$OSX_DEPLOYMENT_TARGET"
+cd "$ENGINE_DIR" && ./scripts/build-external.sh "$BUILD_TYPE"
 if [ $? -ne 0 ]; then
   echo "====> External dependency build failed!"
   exit 1
@@ -112,6 +104,7 @@ CMAKE_ARGS="-DCMAKE_BUILD_TYPE=$BUILD_TYPE"
 
 if [ "$PLATFORM" = "macos" ]; then
   CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_OSX_SYSROOT=$SDK_PATH -DCMAKE_OSX_DEPLOYMENT_TARGET=$OSX_DEPLOYMENT_TARGET"
+  CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_OSX_ARCHITECTURES=$OSX_ARCHITECTURES"
 fi
 
 cmake "$PROJECT_ROOT" $CMAKE_ARGS && make -j${NPROC}
