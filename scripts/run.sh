@@ -52,6 +52,15 @@ if [ "$BUILD_TYPE" = "debug" ] && [ -x "${DIST_DIR}/${PROJECT_NAME}.out" ]; then
   exit $?
 fi
 
+# Check for a macOS app bundle (Release on macOS). Run the inner executable rather
+# than `open`, so stdout and the exit code still reach this shell.
+APP="${DIST_DIR}/${PROJECT_NAME}.app"
+if [ "$BUILD_TYPE" = "release" ] && [ -x "${APP}/Contents/MacOS/${PROJECT_NAME}" ]; then
+  echo "Running: dist/${BUILD_TYPE}-${PLATFORM}/${PROJECT_NAME}.app"
+  cd "$DIST_DIR" && "${APP}/Contents/MacOS/${PROJECT_NAME}"
+  exit $?
+fi
+
 # Check for Release executable (no suffix)
 if [ "$BUILD_TYPE" = "release" ] && [ -x "${DIST_DIR}/${PROJECT_NAME}" ]; then
   echo "Running: dist/${BUILD_TYPE}-${PLATFORM}/${PROJECT_NAME}"
