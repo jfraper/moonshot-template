@@ -2,6 +2,14 @@
 
 Template for creating games with the [Moonshot](https://github.com/jfraper/moonshot) engine.
 
+![The template running](docs/screenshot.png)
+
+`src/main.cpp` starts as a map of where the coordinates go: a `draw_*` square in each screen corner
+and one on the origin, a circle orbiting it off `dt`, and a `ui::` panel with the mouse read back in
+world coordinates and a button that pauses the orbit. Between them they cover the primitives, text,
+UI layout, a widget you can click and state that survives across frames. Its header comment is the
+short version of the section below. Delete it and write your game
+
 ## Quick Start
 
 ```bash
@@ -22,6 +30,42 @@ git submodule update --init --recursive
 2. Edit `src/main.cpp` to set your game title and window size
 3. Put game assets in `assets/`
 4. Optional: drop a 1024x1024 `icon.png` in the project root and it becomes the app and window icon
+
+## Coordinate Systems
+
+The single thing worth knowing before drawing anything. `src/main.cpp` demonstrates all of it, and
+its header comment is the long version
+
+| | Origin | +Y | Units | Anchored by |
+|---|---|---|---|---|
+| `draw_*` | centre of the window | up | design pixels | the quad's pivot, centre by default |
+| `ui::` | centre of the window | up | design pixels | the pivot passed to `Position::absolute` |
+| `input::get_mouse_position()` | bottom-left | up | real window points | n/a |
+
+`draw_*` and `ui::` share one space, so the same numbers mean the same place in both. Convert the
+mouse with `graphics::screen_to_world(renderer, input::get_mouse_position())` before hit-testing
+
+Two boxes that are not the same size. `window::get_size_ref()` is the fixed design box you set in
+`game_configure`. `graphics::get_visible_rect(renderer).size` is what the window actually shows,
+which grows on the short axis when the aspect ratio stops matching, because under the default
+`ScaleMode::FIT` that extra room is real world rather than dead letterbox. Position from the visible
+rect what must hug the true window edge, and from the design box what belongs to a fixed layout.
+**Which box you pick is independent of which API you draw with**: a `draw_*` call measured from the
+design box stays pinned to it exactly as a `ui::` element does
+
+**A renderer with no camera renders through an identity projection**, which reinterprets every
+coordinate as NDC and throws the scene off screen. `set_camera` is mandatory, and the `Camera2D` must
+outlive the renderer because only its address is stored
+
+```cpp
+static Renderer         renderer;
+static camera::Camera2D cam;   // must outlive the renderer
+
+GAME_API void game_init(void* saved, u64 size) {
+  init_renderer(renderer);
+  set_camera(renderer, cam);   // not optional
+}
+```
 
 ## Scripts
 
